@@ -1,0 +1,22 @@
+{
+  "name": "user",
+  "cgroupPath": "/sys/fs/cgroup/user",
+  "cgroupConfigDir": "/home/kncsz/SysMaster/conf/user",
+  "hierarchy": 0,
+  "cgroup": {
+    "controllers": [
+      "memory",
+      "pids",
+      "io",
+      "cpu",
+      "cpuset",
+      "hugetlb",
+      "rdma",
+      "misc"
+    ],
+    "settings": {
+      "cpu.max": "20000 100000",
+      "memory.max": "10M"
+    }
+  }
+}
