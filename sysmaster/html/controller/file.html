@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>文件管理</title>
+		<link rel="stylesheet" type="text/css" href="../../css/file.css">
+	</head>
+	<body>
+		<div class="container">
+			<!-- 左侧边栏 -->
+			<div class="leftsidebar">
+				<img src="../../img/static/workstation/logo.png" alt="Logo" class="logo">
+				<nav>
+					<ul>
+						<li data-title="工作台" id="dashboard"><img src="../../img/static/workstation/1.png" alt="Icon 1"
+								class="icon"></li>
+						<li data-title="组管理" id="cgroup-manage"><img src="../../img/static/workstation/2.png"
+								alt="Icon 2" class="icon"></li>
+						<li data-title="任务管理" id="task-manage"><img src="../../img/static/workstation/3.png"
+								alt="Icon 3" class="icon"></li>
+						<li data-title="文件管理" id="file-management"><img src="../../img/static/workstation/4.png"
+								alt="Icon 4" class="icon"></li>
+						<li><img src="../../img/static/workstation/5.png" alt="Icon 5" class="icon"></li>
+						<li><img src="../../img/static/workstation/6.png" alt="Icon 6" class="icon"></li>
+					</ul>
+				</nav>
+			</div>
+
+			<!-- 右侧内容区 -->
+			<div class="main-content">
+				<!-- 顶部导航 -->
+				<div class="navigate">
+					<div class="nav-left">
+						<a href="#" id="dashboard-link">工作台</a>
+						<a href="#">首页</a>
+						<a href="#">仪表盘</a>
+						<a href="#">工时</a>
+					</div>
+					<div class="nav-right">
+						<input type="text" placeholder="搜索 (Ctrl+K)">
+						<img src="../../img/static/workstation/+.png" alt="Icon">
+						<img src="../../img/static/workstation/wenhao.png" alt="Icon">
+						<img src="../../img/static/workstation/bell.png" alt="Icon">
+						<span class="username">KN</span>
+					</div>
+				</div>
+
+				<!-- 下部内容区 -->
+				<div class="content" id="content">
+					<div class="file-management">
+						<div class="path">
+							<img src="../../img/static/workstation/back.png" alt="Back">
+							<span>根目录 &gt; user &gt;</span>
+						</div>
+						<div class="file-list">
+							<table>
+								<thead>
+									<tr>
+										<th><input type="checkbox"></th>
+										<th>文件名</th>
+										<th>权限/所有者</th>
+										<th>大小</th>
+										<th>修改时间</th>
+										<th>备注</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- 文件列表项 -->
+								</tbody>
+							</table>
+							<div class="file-summary">
+								共0个目录，0个文件，文件大小：<span style="color: green;">计算</span>
+							</div>
+							<div class="pagination">
+								<button>1</button> / <span>1/0</span> 从1-0条 共0条 每页 <select>
+									<option value="10">10</option>
+									<option value="20">20</option>
+									<option value="50">50</option>
+									<option value="100">100</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="../../js/file.js"></script>
+	</body>
+</html>

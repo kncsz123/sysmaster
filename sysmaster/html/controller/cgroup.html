@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>组管理</title>
+		<link rel="stylesheet" type="text/css" href="../../css/cgroup.css">
+	</head>
+	<body>
+		<div class="container">
+			<!-- 左侧边栏 -->
+			<div class="leftsidebar">
+				<img src="../../img/static/workstation/logo.png" alt="Logo" class="logo">
+				<nav>
+					<ul>
+						<li data-title="工作台" id="dashboard"><img src="../../img/static/workstation/1.png" alt="Icon 1"
+								class="icon"></li>
+						<li data-title="组管理" id="cgroup-manage"><img src="../../img/static/workstation/2.png"
+								alt="Icon 2" class="icon"></li>
+						<li data-title="任务管理" id="task-manage"><img src="../../img/static/workstation/3.png"
+								alt="Icon 3" class="icon"></li>
+						<li data-title="文件管理" id="file-management"><img src="../../img/static/workstation/4.png"
+								alt="Icon 4" class="icon"></li>
+						<li><img src="../../img/static/workstation/5.png" alt="Icon 5" class="icon"></li>
+						<li><img src="../../img/static/workstation/6.png" alt="Icon 6" class="icon"></li>
+					</ul>
+				</nav>
+			</div>
+
+			<!-- 右侧内容区 -->
+			<div class="main-content">
+				<!-- 顶部导航 -->
+				<div class="navigate">
+					<div class="nav-left">
+						<a href="#" id="dashboard-link">工作台</a>
+						<a href="#">首页</a>
+						<a href="#">仪表盘</a>
+						<a href="#">工时</a>
+					</div>
+					<div class="nav-right">
+						<input type="text" placeholder="搜索 (Ctrl+K)">
+						<img src="../../img/static/workstation/+.png" alt="Icon">
+						<img src="../../img/static/workstation/wenhao.png" alt="Icon">
+						<img src="../../img/static/workstation/bell.png" alt="Icon">
+						<span class="username">KN</span>
+					</div>
+				</div>
+
+				<!-- 下部内容区 -->
+				<div class="content" id="content">
+					<!-- 操作栏 -->
+					<div class="task-actions">
+						<input type="text" placeholder="组名称">
+						<input type="text" placeholder="创建时间" id="create-time-start"> 到 <input type="text"
+							placeholder="创建时间" id="create-time-end">
+						<button id="search-cgroup">搜索</button>
+					</div>
+
+					<!-- 任务操作 -->
+					<div class="task-options">
+						<button id="add-cgroup">添加组</button>
+						<button>导出选中记录</button>
+						<button>导出所有记录</button>
+					</div>
+
+					<!-- 组列表 -->
+					<div class="task-list">
+						<table>
+							<thead>
+								<tr>
+									<th><input type="checkbox"></th>
+									<th>组名称</th>
+									<th>层级</th>
+									<th>创建时间</th>
+									<th>说明</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody id="cgroup-table-body">
+								<!-- 示例数据 -->
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>test-group</td>
+									<td>1</td>
+									<td>2024-03-21 07:59:48</td>
+									<td>组说明</td>
+									<td>
+										<button class="view-config" data-name="test-cgroup" data-hierarchy="1"
+											data-controller-id="01">查看组配置</button>
+										<button class="edit-config" data-name="test-group" data-hierarchy="1"
+											data-controller-id="01">修改组配置</button>
+										<button class="delete" data-name="test-group" data-hierarchy="1">删除组</button>
+										<button class="create-subgroup" data-name="${cgroup.name}"
+											data-hierarchy="${cgroup.hierarchy}">创建子组</button>
+									</td>
+								</tr>
+								<!-- 更多数据行 -->
+							</tbody>
+						</table>
+					</div>
+
+					<!-- 分页 -->
+					<div class="pagination">
+						<button>&lt;&lt;</button>
+						<button>&lt;</button>
+						<span>1</span>
+						<button>&gt;</button>
+						<button>&gt;&gt;</button>
+						<select>
+							<option value="10">10</option>
+							<option value="20">20</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 新增组浮框 -->
+		<div class="modal" id="cgroup-modal">
+			<div class="modal-content">
+				<span class="close-button" id="close-cgroup-modal">&times;</span>
+				<h2>新增组</h2>
+				<div class="form-section">
+					<h3>基本信息</h3>
+					<form id="cgroup-form">
+						<label for="cgroup-name">组名称：<span>*</span></label>
+						<input type="text" id="cgroup-name" placeholder="请输入组名称">
+
+						<label for="remarks">备注：</label>
+						<textarea id="remarks" rows="4"></textarea>
+
+						<div class="form-actions">
+							<button type="button" id="save-and-add-cgroup">保存并新增</button>
+							<button type="button" id="close-form-cgroup">关闭</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- 组配置浮框 -->
+		<div class="modal" id="cgroup-config-modal">
+			<div class="modal-content">
+				<span class="close-button" id="close-config-modal">&times;</span>
+				<h2>组配置</h2>
+				<div id="cgroup-config-details"></div>
+				<div class="form-actions">
+					<button type="button" id="close-config">关闭</button>
+				</div>
+			</div>
+		</div>
+
+		<script src="../../js/cgroup.js"></script>
+	</body>
+</html>
