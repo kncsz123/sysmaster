@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="priv.cgroup.mapper.CgroupMapper">
+
+    <resultMap id="CgroupResultMap" type="priv.cgroup.object.Cgroup">
+        <id property="id" column="id"/>
+        <result property="hierarchy" column="hierarchy"/>
+        <result property="name" column="name"/>
+        <result property="datestamp" column="datestamp"/>
+        <result property="cgroupPath" column="cgroupPath"/>
+        <result property="cgroupConfigPath" column="cgroupConfigPath"/>
+        <result property="cpuStat" column="cpuStat"/>
+        <result property="memoryStat" column="memoryStat"/>
+        <result property="ioStat" column="ioStat"/>
+        <result property="pidsStat" column="pidsStat"/>
+        <result property="cpusetStat" column="cpusetStat"/>
+    </resultMap>
+
+    <resultMap id="AllCgroupResultMap" type="priv.cgroup.object.Cgroup">
+        <id property="id" column="id"/>
+        <result property="hierarchy" column="hierarchy"/>
+        <result property="name" column="name"/>
+        <result property="datestamp" column="datestamp"/>
+        <result property="cgroupPath" column="cgroupPath"/>
+        <result property="cgroupConfigPath" column="cgroupConfigPath"/>
+        <result property="cpuStat" column="cpuStat"/>
+        <result property="memoryStat" column="memoryStat"/>
+        <result property="ioStat" column="ioStat"/>
+        <result property="pidsStat" column="pidsStat"/>
+        <result property="cpusetStat" column="cpusetStat"/>
+    </resultMap>
+
+    <!-- 动态查询特定组 -->
+    <select id="selectCgroup" resultType="priv.cgroup.object.Cgroup" resultMap="CgroupResultMap">
+        SELECT cgroupPath, cgroupConfigPath
+        FROM cgroup
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="hierarchy != null">
+                AND hierarchy = #{hierarchy}
+            </if>
+            <if test="name != null">
+                AND name = #{name}
+            </if>
+            <if test="datestamp != null">
+                AND datestamp = #{datestamp}
+            </if>
+            <if test="cgroupPath != null">
+                AND cgroupPath = #{cgroupPath}
+            </if>
+            <if test="cgroupConfigPath != null">
+                AND cgroupConfigPath = #{cgroupConfigPath}
+            </if>
+            <if test="cpuStat != null">
+                AND cpuStat = #{cpuStat}
+            </if>
+            <if test="memoryStat != null">
+                AND memoryStat = #{memoryStat}
+            </if>
+            <if test="ioStat != null">
+                AND ioStat = #{ioStat}
+            </if>
+            <if test="pidsStat != null">
+                AND pidsStat = #{pidsStat}
+            </if>
+            <if test="cpusetStat != null">
+                AND cpusetStat = #{cpusetStat}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询全部组 -->
+    <select id="selectAllCgroup" resultType="priv.cgroup.object.Cgroup" resultMap="AllCgroupResultMap">
+        SELECT *
+        FROM cgroup
+    </select>
+
+    <insert id="insertCgroup">
+        INSERT INTO cgroup (hierarchy, name, cgroupPath, cgroupConfigPath, cpuStat, memoryStat, ioStat, pidsStat, cpusetStat)
+        VALUES (#{hierarchy}, #{name}, #{datestamp}, #{cgroupPath}, #{cgroupConfigPath}, #{cpuStat}, #{memoryStat}, #{ioStat}, #{pidsStat}, #{cpusetStat})
+    </insert>
+
+    <update id="updateCgroup">
+        UPDATE cgroup
+        SET cgroupPath = #{cgroupPath}, cgroupConfigPath = #{cgroupConfigPath},
+            cpuStat = #{cpuStat}, memoryStat = #{memoryStat}, ioStat = #{ioStat},
+            pidsStat = #{pidsStat}, cpusetStat = #{cpusetStat}, datestamp = #{datestamp}
+        WHERE hierarchy = #{hierarchy} AND name = #{name}
+    </update>
+
+    <delete id="deleteCgroup">
+        DELETE FROM cgroup WHERE hierarchy = #{hierarchy} AND name = #{name}
+    </delete>
+
+</mapper>

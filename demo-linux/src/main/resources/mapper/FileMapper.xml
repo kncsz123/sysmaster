@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="priv.cgroup.mapper.FileMapper">
+
+    <resultMap id="selectFileMapResult" type="priv.cgroup.object.File">
+        <id property="id" column="id"/>
+        <result property="path" column="path"/>
+        <result property="datestamp" column="datestamp"/>
+        <result property="name" column="name"/>
+        <result property="lastmodified" column="lastmodified"/>
+    </resultMap>
+
+    <resultMap id="selectAllFileMapResult" type="priv.cgroup.object.File">
+        <id property="id" column="id"/>
+        <result property="path" column="path"/>
+        <result property="datestamp" column="datestamp"/>
+        <result property="name" column="name"/>
+        <result property="lastmodified" column="lastmodified"/>
+    </resultMap>
+
+    <!-- 查询特定文件 -->
+    <select id="selectFile" parameterType="String" resultType="priv.cgroup.object.File" resultMap="selectFileMapResult">
+        SELECT name, path, datestamp, lastmodified
+        FROM file
+        WHERE path = #{path}
+    </select>
+
+    <!-- 查询所有文件 -->
+    <select id="selectAllFile" parameterType="void" resultType="priv.cgroup.object.File" resultMap="selectAllFileMapResult">
+        SELECT *
+        FROM file
+    </select>
+
+    <!-- 插入文件 -->
+    <insert id="insertFile" parameterType="priv.cgroup.object.File">
+        INSERT INTO file (name, path, datestamp,lastmodified)
+        VALUES (#{name}, #{path}, #{datestamp}, #{lastmodified})
+    </insert>
+
+    <!-- 删除文件 -->
+    <delete id="deleteFile" parameterType="String">
+        DELETE FROM file
+        WHERE path = #{path}
+    </delete>
+
+</mapper>
