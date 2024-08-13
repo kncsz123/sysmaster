@@ -1,0 +1,267 @@
+body,
+html {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, sans-serif;
+	height: 100%;
+	width: 100%;
+}
+
+.container {
+	display: flex;
+	height: 100%;
+}
+
+.leftsidebar {
+	background-color: #2f3a47;
+	color: white;
+	width: 100px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 10px;
+	position: relative;
+}
+
+.leftsidebar .logo {
+	width: 40px;
+	margin-bottom: 20px;
+}
+
+.leftsidebar nav ul {
+	list-style: none;
+	padding: 0;
+}
+
+.leftsidebar nav ul li {
+	margin: 40px 0;
+	position: relative;
+}
+
+.leftsidebar nav ul li img {
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+	transition: transform 0.3s;
+}
+
+.leftsidebar nav ul li img:hover {
+	transform: scale(1.2);
+}
+
+.leftsidebar nav ul li img.active {
+	border: 2px solid #007bff;
+	border-radius: 5px;
+}
+
+.main-content {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.navigate {
+	background-color: #f7f7f7;
+	display: flex;
+	justify-content: space-between;
+	padding: 10px 20px;
+	border-bottom: 1px solid #ddd;
+}
+
+.nav-left a {
+	margin-right: 20px;
+	text-decoration: none;
+	color: black;
+}
+
+.nav-right input {
+	padding: 5px;
+	margin-right: 10px;
+}
+
+.nav-right img {
+	width: 24px;
+	height: 24px;
+	margin-right: 10px;
+}
+
+.nav-right .username {
+	background-color: orange;
+	padding: 5px 10px;
+	border-radius: 50%;
+	color: white;
+}
+
+.content {
+	display: flex;
+	flex-grow: 1;
+	padding: 20px;
+}
+
+.left-content {
+	width: 25%;
+	padding-right: 20px;
+}
+
+.right-content {
+	flex-grow: 1;
+	position: relative;
+}
+
+.profile {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.user-image {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	margin-bottom: 10px;
+}
+
+.status {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 20px 120px;
+}
+
+.status button {
+	padding: 5px 10px;
+}
+
+.overview ul {
+	list-style: none;
+	padding: 0px;
+	padding-top: 10px;
+}
+
+.overview li {
+	list-style: none;
+	padding: 10px;
+}
+
+.upload {
+	margin-top: 20px;
+}
+
+.upload button {
+	padding: 5px 10px;
+}
+
+.recent-use,
+.recent-visit {
+	margin-bottom: 20px;
+}
+
+.recent-use h2,
+.recent-visit h2 {
+	margin-bottom: 10px;
+}
+
+.placeholder {
+	width: 100%;
+	height: 200px;
+	background-color: #f0f0f0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.placeholder img {
+	width: 100%;
+	height: 200px;
+}
+
+.hover-title {
+	position: absolute;
+	background-color: #333;
+	color: #fff;
+	padding: 5px 10px;
+	border-radius: 5px;
+	top: 50%;
+	left: 110%;
+	/* 调整位置以在图标旁边显示 */
+	transform: translateY(-50%);
+	white-space: nowrap;
+	display: none;
+}
+
+/* 上传文件浮框 */
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+	background-color: #fff;
+	margin: 10% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 400px;
+	position: relative;
+	text-align: center;
+}
+
+.close-button {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+/* 文件管理样式 */
+.file-management {
+	display: none;
+	flex-direction: column;
+	width: 100%;
+}
+
+.file-management.active {
+	display: flex;
+}
+
+.file-management .path {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	background-color: #f7f7f7;
+	border-bottom: 1px solid #ddd;
+}
+
+.file-management .path img {
+	margin-right: 10px;
+}
+
+.file-management .file-list {
+	flex-grow: 1;
+	padding: 20px;
+}
+
+.file-management table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.file-management th,
+.file-management td {
+	padding: 10px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}

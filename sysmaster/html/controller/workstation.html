@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>工作台界面</title>
+		<link rel="stylesheet" type="text/css" href="../../css/workstation.css">
+	</head>
+	<body>
+		<div class="container">
+			<!-- 左侧边栏 -->
+			<div class="leftsidebar">
+				<img src="../../img/static/workstation/logo.png" alt="Logo" class="logo">
+				<nav>
+					<ul>
+						<li data-title="工作台" id="dashboard"><img src="../../img/static/workstation/1.png" alt="Icon 1"
+								class="icon"></li>
+						<li data-title="组管理" id="cgroup-manage"><img src="../../img/static/workstation/2.png"
+								alt="Icon 2" class="icon">
+						</li>
+						<li data-title="任务管理" id="task-manage"><img src="../../img/static/workstation/3.png"
+								alt="Icon 3" class="icon">
+						</li>
+						<li data-title="文件管理" id="file-management"><img src="../../img/static/workstation/4.png"
+								alt="Icon 4" class="icon">
+						</li>
+						<li><img src="../../img/static/workstation/5.png" alt="Icon 5" class="icon"></li>
+						<li><img src="../../img/static/workstation/6.png" alt="Icon 6" class="icon"></li>
+					</ul>
+				</nav>
+			</div>
+
+			<!-- 右侧内容区 -->
+			<div class="main-content">
+				<!-- 顶部导航 -->
+				<div class="navigate">
+					<div class="nav-left">
+						<a href="#" id="dashboard-link">工作台</a>
+						<a href="#">首页</a>
+						<a href="#">仪表盘</a>
+						<a href="#">工时</a>
+					</div>
+					<div class="nav-right">
+						<input type="text" placeholder="搜索 (Ctrl+K)">
+						<img src="../../img/static/workstation/+.png" alt="Icon">
+						<img src="../../img/static/workstation/wenhao.png" alt="Icon">
+						<img src="../../img/static/workstation/bell.png" alt="Icon">
+						<span class="username">KN</span>
+					</div>
+				</div>
+
+				<!-- 下部内容区 -->
+				<div class="content" id="content">
+					<div class="left-content">
+						<div class="profile">
+							<img src="../../img/static/workstation/default-avatar.png" alt="User" class="user-image">
+							<span id="greeting">kncsz，下午好</span>
+							<span>今天是8月1日，星期四</span>
+						</div>
+						<div class="status">
+							<button>设置状态</button>
+						</div>
+						<div class="overview">
+							<h2>概览</h2>
+							<ul>
+								<li>待完成事项 · 0</li>
+								<li>待评审事项 · 0</li>
+								<li>待处理提醒 · 0</li>
+							</ul>
+						</div>
+						<div class="upload">
+							<h2>上传文件</h2>
+							<button id="uploadButton">上传</button>
+						</div>
+					</div>
+
+					<div class="right-content">
+						<div class="recent-use">
+							<h2>最近使用</h2>
+							<div class="placeholder"><img src="../../img/static/workstation/null.png" alt="Placeholder">
+							</div>
+						</div>
+						<div class="recent-visit">
+							<h2>最近访问</h2>
+							<div class="placeholder"><img src="../../img/static/workstation/null.png" alt="Placeholder">
+							</div>
+						</div>
+						<div id="hoverTitle" class="hover-title"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 上传文件浮框 -->
+		<div id="uploadModal" class="modal">
+			<div class="modal-content">
+				<span class="close-button">&times;</span>
+				<h2>上传文件</h2>
+				<input type="file" id="fileInput">
+				<button id="confirmUploadButton">确定</button>
+			</div>
+		</div>
+
+		<script src="../../js/workstation.js"></script>
+	</body>
+</html>
