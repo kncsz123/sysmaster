@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="priv.cgroup.mapper.TaskMapper">
+
+    <!-- 动态查询特定任务 -->
+    <select id="selectTask" parameterType="String" resultType="priv.cgroup.object.Task" resultMap="selectTaskMapResult">
+        SELECT pid, datestamp, path
+        FROM task
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="pid != null">
+                AND pid = #{pid}
+            </if>
+            <if test="path != null">
+                AND path = #{path}
+            </if>
+            <if test="datestamp != null">
+                AND datestamp = #{datestamp}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="selectTaskMapResult" type="priv.cgroup.object.Task">
+        <id property="id" column="id"/>
+        <result property="pid" column="pid"/>
+        <result property="path" column="path"/>
+        <result property="datestamp" column="datestamp"/>
+    </resultMap>
+
+    <!-- 查询所有任务 -->
+    <select id="selectAllTask" parameterType="void" resultType="priv.cgroup.object.Task" resultMap="TaskResultMap">
+        SELECT pid, path, datestamp
+        FROM task
+    </select>
+
+    <!-- 结果映射 -->
+    <resultMap id="TaskResultMap" type="priv.cgroup.object.Task">
+        <id property="id" column="id"/>
+        <result property="pid" column="pid"/>
+        <result property="path" column="path"/>
+        <result property="datestamp" column="datestamp"/>
+    </resultMap>
+
+    <!-- 插入任务 -->
+    <insert id="insertTask" parameterType="priv.cgroup.object.Task">
+        INSERT INTO task (pid, path, datestamp)
+        VALUES (#{pid}, #{path}, #{pdatestamp})
+    </insert>
+
+    <!-- 更新任务 -->
+    <update id="updateTask" parameterType="priv.cgroup.object.Task">
+        UPDATE task
+        SET pid = #{pid}, path = #{path}, datestamp = #{datestamp}
+    </update>
+
+    <!-- 删除任务 -->
+    <delete id="deleteTask" parameterType="String">
+        DELETE FROM task
+        WHERE pid = #{pid}
+    </delete>
+
+</mapper>
