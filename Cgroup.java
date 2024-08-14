@@ -61,21 +61,7 @@ public class Cgroup {
     @Column
     private boolean misc_controller_status;
 
-    public Cgroup() {
-        this.name ="default";
-        this.cgroupPath = "default";
-        this.cgroupConfigDir = "default";
-        this.hierarchy = -1;
-        this.description = "default";
-        this.cpu_controller_status = false;
-        this.memory_controller_status = false;
-        this.io_controller_status = false;
-        this.pids_controller_status = false;
-        this.cpuset_controller_status = false;
-        this.rdma_controller_status = false;
-        this.hugetlb_controller_status = false;
-        this.misc_controller_status = false;
-    }
+    public Cgroup() {}
 
     public Cgroup(String name, int hierarchy, String datestamp, String description){
         this.name = name;
@@ -87,14 +73,6 @@ public class Cgroup {
     public Cgroup(String cgroupPath, String cgroupConfigDir){
         this.cgroupPath = cgroupPath;
         this.cgroupConfigDir = cgroupConfigDir;
-        this.cpu_controller_status = false;
-        this.memory_controller_status = false;
-        this.io_controller_status = false;
-        this.pids_controller_status = false;
-        this.cpuset_controller_status = false;
-        this.rdma_controller_status = false;
-        this.hugetlb_controller_status = false;
-        this.misc_controller_status = false;
     }
 
     public String getName() {return name;}
