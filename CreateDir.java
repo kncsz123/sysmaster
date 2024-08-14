@@ -8,6 +8,7 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -26,11 +27,22 @@ public class CreateDir {
             String path = requestBody.get("path").toString();
             String name = requestBody.get("name").toString();
 
-            String concatPath = "/home/kncsz/SysMaster/file/user" + path + "/" + name;
-            File file = new File(concatPath);
+            String concatPath = "/home/kncsz/SysMaster/file/user" + path;
+            File newFile = new File(concatPath);
 
-            if(!file.exists()){
-                if(file.mkdirs()){
+            // 检查是否存在同名的目录
+            List<priv.cgroup.object.File> existingDirectories = fileRepository.findByPath(concatPath);
+            boolean isNameConflict = existingDirectories.stream()
+                    .anyMatch(file -> file.getName().equals(name) && file.getType().equals("directory"));
+
+            if (isNameConflict) {
+                response.put("status", 409);
+                response.put("message", "A directory with the same name already exists in the same path.");
+                return response;
+            }
+
+            if(!newFile.exists()){
+                if(newFile.mkdirs()){
                     LocalDateTime now = LocalDateTime.now();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd E HH:mm:ss");
                     String datestamp = now.format(formatter);

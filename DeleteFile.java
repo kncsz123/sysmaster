@@ -44,7 +44,11 @@ public class DeleteFile {
                     if(file.delete()){
                         // 递归删除
                         deleteDirectoryRecursively(file);
+                        // 在数据库中执行两次删除,第一次删除目录条目,第二次删除目录下所有子文件,子目录的条目;
+                        String directoryPath = "/home/kncsz/SysMaster/file/user" + path;
+                        fileRepository.deleteByPathAndNameAndType(directoryPath, name, "directory");
                         fileRepository.deleteByPathPrefix(concatPath);
+
                         response.put("status", 200);
                         response.put("message", "success");
                     }
