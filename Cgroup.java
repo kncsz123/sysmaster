@@ -23,21 +23,6 @@ public class Cgroup {
     private int hierarchy;
 
     @Column
-    private Byte isCpu_controller_status;
-
-    @Column
-    private Byte isCpuset_controller_status;
-
-    @Column
-    private Byte isIo_controller_status;
-
-    @Column
-    private Byte isMemory_controller_status;
-
-    @Column
-    private Byte isPids_controller_status;
-
-    @Column
     private boolean cpu_controller_status;
 
     @Column
@@ -188,45 +173,5 @@ public class Cgroup {
 
     public void setMisc_controller_status(boolean misc_controller_status) {
         this.misc_controller_status = misc_controller_status;
-    }
-
-    public Byte getIsCpu_controller_status() {
-        return isCpu_controller_status;
-    }
-
-    public void setIsCpu_controller_status(Byte isCpu_controller_status) {
-        this.isCpu_controller_status = isCpu_controller_status;
-    }
-
-    public Byte getIsCpuset_controller_status() {
-        return isCpuset_controller_status;
-    }
-
-    public void setIsCpuset_controller_status(Byte isCpuset_controller_status) {
-        this.isCpuset_controller_status = isCpuset_controller_status;
-    }
-
-    public Byte getIsIo_controller_status() {
-        return isIo_controller_status;
-    }
-
-    public void setIsIo_controller_status(Byte isIo_controller_status) {
-        this.isIo_controller_status = isIo_controller_status;
-    }
-
-    public Byte getIsMemory_controller_status() {
-        return isMemory_controller_status;
-    }
-
-    public void setIsMemory_controller_status(Byte isMemory_controller_status) {
-        this.isMemory_controller_status = isMemory_controller_status;
-    }
-
-    public Byte getIsPids_controller_status() {
-        return isPids_controller_status;
-    }
-
-    public void setIsPids_controller_status(Byte isPids_controller_status) {
-        this.isPids_controller_status = isPids_controller_status;
     }
 }
