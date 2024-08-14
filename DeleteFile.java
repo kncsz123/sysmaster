@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import priv.cgroup.repository.FileRepository;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,31 +20,57 @@ public class DeleteFile {
 
     //异常
     public Map<String, Object> deleteFile(Map<String, Object> requestBody) {
-        Map<String, Object> response = new HashMap<String, Object>();
+        Map<String, Object> response = new HashMap<>();
 
         try{
             String path = requestBody.get("path").toString();
+            String type = requestBody.get("type").toString();
+            String name = requestBody.get("name").toString();
 
-            // 删除文件
-            ProcessBuilder builder = new ProcessBuilder();
-            builder.command("rm", "-rf", path); // 注意安全性，rm -rf 命令会递归删除文件夹及其内容，慎用！
-            Process process = builder.start();
-            int exitCode = process.waitFor();
+            String concatPath = "/home/kncsz/SysMaster/file/user" + path + "/" + name;
 
-            // 删除成功则删除数据库中对应条目
-            if (exitCode != 0) {
-                fileRepository.deleteByPath(path);
-                response.put("status", 200);
-                response.put("message", "File deleted successfully");
-            }else{
-                response.put("status", 400);
-                response.put("message", "error occured while deleting file");
+            if(type.equals("file")){
+                File file = new File(concatPath);
+                if(file.exists()){
+                    if(file.delete()){
+                        fileRepository.deleteByPath(concatPath);
+                        response.put("status", 200);
+                        response.put("message", "success");
+                    }
+                }
+            }else if(type.equals("directory")){
+                File file = new File(concatPath);
+                if(file.exists()){
+                    if(file.delete()){
+                        // 递归删除
+                        deleteDirectoryRecursively(file);
+                        fileRepository.deleteByPathPrefix(concatPath);
+                        response.put("status", 200);
+                        response.put("message", "success");
+                    }
+                }
             }
-        }catch(IOException | InterruptedException e){
+        }catch(Exception e){
             response.put("status", 500);
             response.put("message", "Bad Request");
         }
-        
         return response;
+    }
+
+    // 递归删除目录及其子文件和子目录
+    private boolean deleteDirectoryRecursively(File dir) {
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // 递归删除子文件和子目录
+                    if (!deleteDirectoryRecursively(file)) {
+                        return false; // 如果有一个文件或目录未成功删除，则返回 false
+                    }
+                }
+            }
+        }
+        // 删除空目录或文件
+        return dir.delete();
     }
 }
