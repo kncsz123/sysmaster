@@ -5,8 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import priv.cgroup.object.Cgroup;
 import priv.cgroup.repository.CgroupRepository;
+import priv.cgroup.repository.TaskRepository;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,22 +20,25 @@ public class DeleteCgroup {
     @Autowired
     private final CgroupRepository cgroupRepository;
 
-    public DeleteCgroup(CgroupRepository cgroupRepository) {
+    @Autowired
+    private final TaskRepository taskRepository;
+
+    public DeleteCgroup(CgroupRepository cgroupRepository, TaskRepository taskRepository) {
         this.cgroupRepository = cgroupRepository;
+        this.taskRepository = taskRepository;
     }
 
     /*
         @param name cgroup的名称
         @param hierarchy cgroup所在层级
      */
-    @Transactional
     public Map<String, Object> deleteCgroup(Map<String, Object> requestBody) {
         Map<String, Object> response = new HashMap<>();
 
         String name = requestBody.get("name").toString();
         int hierarchy = Integer.parseInt(requestBody.get("hierarchy").toString());
 
-        if(name == "user"){
+        if(name.equals("user")){
             response.put("status", 403);
             response.put("message", "you have no authority to do this operation");
             return response;
@@ -46,17 +53,27 @@ public class DeleteCgroup {
         String configDir = path.get("cgroupConfigDir");
 
         try {
-            //删除cgroup（异常）
+            // 读取cgroupPath + File.seperator + cgroup.procs文件里是否存在活动的进程。
+            // TODO 如果存在活动的进程，则中断该服务，等待用户选择确定删除后，前端传来确定继续执行下列操作
+            if (hasActiveProcesses(cgroupPath)) {
+                response.put("status", 409);  // 409 Conflict 表示需要用户确认
+                response.put("message", "There are active processes in the cgroup. Confirm deletion?");
+                response.put("needsConfirmation", true);
+                return response;
+            }
+
+            // 删除cgroup
             Process deleteProcess1 = new ProcessBuilder("sudo", "rmdir", cgroupPath).start();
             deleteProcess1.waitFor();
 
             // 删除当前cgroup配置文件所在目录（这将会删除所有子文件夹）
             deleteDirectory(new File(configDir));
 
-            //批量删除数据库中所有cgroupPath前缀含有当前cgroupPath的条目
+            // 批量删除数据库中所有cgroupPath前缀含有当前cgroupPath的条目
             cgroupRepository.deleteCgroupByPathPrefix(cgroupPath);
+            taskRepository.deleteTaskByPathPrefix(cgroupPath);
 
-            //删除configDir下名为name.json的配置文件
+            // 删除configDir下名为name.json的配置文件
             File configFile = new File(configDir + "/" + name + ".json");
             if (configFile.exists() && !configFile.delete()) {
                 throw new Exception("Failed to delete config file: " + configFile.getAbsolutePath());
@@ -103,6 +120,14 @@ public class DeleteCgroup {
         }
         if (!directory.delete()) {
             throw new Exception("Failed to delete directory: " + directory.getAbsolutePath());
+        }
+    }
+
+    // 判断 cgroup 中是否存在活动的进程
+    private boolean hasActiveProcesses(String cgroupPath) throws IOException {
+        File procsFile = new File(cgroupPath + File.separator + "cgroup.procs");
+        try (BufferedReader reader = new BufferedReader(new FileReader(procsFile))) {
+            return reader.readLine() != null;  // 如果有内容，返回 true，表示存在活动进程
         }
     }
 }
