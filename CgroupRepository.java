@@ -15,9 +15,8 @@ import java.util.List;
 @Repository
 public interface CgroupRepository extends JpaRepository<Cgroup, Integer> , JpaSpecificationExecutor<Cgroup> {
 
-    @Query("SELECT new priv.cgroup.object.Cgroup(c.cgroupPath,c.cgroupConfigDir) FROM Cgroup c WHERE c.hierarchy = :hierarchy AND c.name = :name")
-    //@Query(value = "SELECT * FROM cgroup WHERE name = ?1 and hierarchy = ?2", nativeQuery = true)
-    public Cgroup selectCgroup(@Param("hierarchy") int hierarchy,
+    @Query("SELECT new priv.cgroup.object.Cgroup(c.cgroupPath,c.cgroupConfigDir,c.cpu_controller_status,c.cpuset_controller_status,c.io_controller_status,c.memory_controller_status,c.pids_controller_status) FROM Cgroup c WHERE c.hierarchy = :hierarchy AND c.name = :name")
+    Cgroup selectCgroup(@Param("hierarchy") int hierarchy,
                                @Param("name") String name);
     List<Cgroup> findByName(String name);
 
@@ -30,11 +29,11 @@ public interface CgroupRepository extends JpaRepository<Cgroup, Integer> , JpaSp
     @NotNull
     @Transactional
     @Override
-    public Cgroup save(Cgroup cgroup);
+    Cgroup save(Cgroup cgroup);
 
     //在方法执行前开启一个事务，并在方法执行后根据情况提交或回滚事务。
     @Transactional
     @Modifying
     @Query("DELETE FROM Cgroup c WHERE c.cgroupPath LIKE CONCAT(:cgroupPath, '%')")
-    public void deleteCgroupByPathPrefix(@Param("cgroupPath") String cgroupPath);
+    void deleteCgroupByPathPrefix(@Param("cgroupPath") String cgroupPath);
 }
