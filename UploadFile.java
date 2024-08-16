@@ -1,5 +1,6 @@
 package priv.cgroup.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -7,7 +8,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import priv.cgroup.object.File;
 import priv.cgroup.repository.FileRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,6 +35,7 @@ public class UploadFile {
         MultipartFile file = null;
         String path = "";
         String fileName = "";
+        String description = "";
         String parentDir = "";
         java.io.File fileForCheck = null;
         try{
@@ -46,6 +47,8 @@ public class UploadFile {
 
             // 获取字符串参数
             path = multipartRequest.getParameter("path");
+
+            description = multipartRequest.getParameter("description");
 
             fileName = file.getOriginalFilename();
 
@@ -94,7 +97,7 @@ public class UploadFile {
         try {
 
             // 指向上传到服务器上的文件目录
-            Path filePath = Paths.get(parentDir);
+            Path filePath = Paths.get(parentDir + java.io.File.separator + fileName);
 
             // 创建文件夹路径，如果不存在则创建
             Files.createDirectories(filePath.getParent());
@@ -102,13 +105,16 @@ public class UploadFile {
             // 将上传的文件保存到目标路径
             Files.copy(file.getInputStream(), filePath);
 
+            // 修改文件所有权
+            changeFileOwnership(filePath.toString(), "kncsz");
+
             // 如果不是可执行文件,则回退上传
-            if(!fileForCheck.canExecute()){
-                Files.delete(filePath);
-                response.put("status", 400);
-                response.put("message", "File is not executable.");
-                return response;
-            }
+//            if(!fileForCheck.canExecute()){
+//                Files.delete(filePath);
+//                response.put("status", 400);
+//                response.put("message", "File is not executable.");
+//                return response;
+//            }
 
             // TODO
             // 判断文件是否存在病毒
@@ -131,14 +137,14 @@ public class UploadFile {
             fileRepository.updateFileSizeByPathAndType(size, parentDir, "directory");
 
             // 将文件信息写入数据库
-            File insertedFile = new File(fileName, parentDir, timestamp, timestamp, size, "file");
+            File insertedFile = new File(fileName, parentDir, timestamp, timestamp, size, "file", description);
             fileRepository.save(insertedFile);
             System.out.println("File uploaded successfully at: " + timestamp);
 
             // 成功结果
             response.put("status", 200);
             response.put("message", "File uploaded successfully.");
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             // 失败结果
             response.put("status", 500);
             response.put("message", "Failed to upload file: " + e.getMessage());
@@ -146,6 +152,15 @@ public class UploadFile {
         }
 
         return response;
+    }
+
+    private void changeFileOwnership(String filePath, String user) throws IOException, InterruptedException {
+        ProcessBuilder processBuilder = new ProcessBuilder("sudo", "chown", user, filePath);
+        Process process = processBuilder.start();
+        int resultCode = process.waitFor();
+        if (resultCode != 0) {
+            throw new IOException("Failed to change file ownership.");
+        }
     }
 
 //    private boolean isSafe(java.io.File fileForCheck) {
