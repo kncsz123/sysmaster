@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>文件管理</title>
 		<link rel="stylesheet" type="text/css" href="../../css/file.css">
 	</head>
+
 	<body>
 		<div class="container">
 			<!-- 左侧边栏 -->
@@ -50,19 +52,22 @@
 				<div class="content" id="content">
 					<div class="file-management">
 						<div class="path">
-							<img src="../../img/static/workstation/back.png" alt="Back">
-							<span>根目录 &gt; user &gt;</span>
+							<span id="pathDisplay"></span>
+						</div>
+						<div class="action-buttons">
+							<button id="uploadFileBtn">上传文件</button>
+							<button id="createDirBtn">创建目录</button>
 						</div>
 						<div class="file-list">
 							<table>
 								<thead>
 									<tr>
-										<th><input type="checkbox"></th>
-										<th>文件名</th>
-										<th>权限/所有者</th>
-										<th>大小</th>
-										<th>修改时间</th>
-										<th>备注</th>
+										<th><input type="checkbox" id="selectAllCheckbox"></th>
+										<th>名称</th>
+										<th>类型</th>
+										<th>大小(Byte)</th>
+										<th>创建时间</th>
+										<th>描述</th>
 										<th>操作</th>
 									</tr>
 								</thead>
@@ -74,11 +79,12 @@
 								共0个目录，0个文件，文件大小：<span style="color: green;">计算</span>
 							</div>
 							<div class="pagination">
-								<button>1</button> / <span>1/0</span> 从1-0条 共0条 每页 <select>
+								<button id="prevPageBtn">&lt;&lt;</button>
+								<span id="currentPage">1/0</span>
+								<button id="nextPageBtn">&gt;&gt;</button>
+								每页 <select id="itemsPerPage">
 									<option value="10">10</option>
 									<option value="20">20</option>
-									<option value="50">50</option>
-									<option value="100">100</option>
 								</select>
 							</div>
 						</div>
@@ -89,4 +95,5 @@
 
 		<script src="../../js/file.js"></script>
 	</body>
+
 </html>

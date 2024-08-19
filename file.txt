@@ -1,0 +1,26 @@
+通过selectFileapi每一行显示名称name，文件类型type，大小size，创建时间datestamp，描述description,路径path不需要显示，但是需要保存（查询出来的path只需要保存/user及以后的部分，例如/home/kncsz/SysMaster/file/user/kncsz,仅保存/kncsz。操作（操作下是按钮）。type有两种，查询到type为directory的条目优先显示在前排，file显示在后排。点击根目录（kncsz），则将/kncsz通过http://192.168.81.134:8081/api/user/selectFile查询当前目录下的文件和目录，点击kncsz > test1则传/kncsz/test1去查询，以此类推。/kncsz下面添加两个按钮，一个是上传文件，一个是创建目录。点击上传文件，获取当前路径，跳出浮动框，有描述框（让用户输入），选择文件和确定按钮，点击确定后调用http://192.168.81.134:8081/api/user/uploadFile将file和path和description打包传给后端。
+点击创建目录，跳出浮动框，让用户输入名称name和描述description，有确定和关闭两个按钮，点击确定后调用http://192.168.81.134:8081/api/user/createDirectory将当前路径path和name和description打包传给后端。操作下面有三个按钮，上传文件，创建目录以及删除这三个按钮，上传文件和创建目录同上操作，只是path是获取当前行的path。删除的话调用http://192.168.81.134:8081/api/user/deleteFile，将path传给后端。
+
+还有一点，每页可选择显示10或20条。假设选择10条，查出来11条，需要显示在第二页，假设选择显示20条，查出来15条但当前页面存不下，不需要存在第二页但是需要用户滚动鼠标显示后面的条目。<button>1</button> / <span>1/0</span> 从1-0条 共0条 每页 <select>这里只显示当前页数和条数。不要让用户输入页数进行查询，使用>> << 进入下一页或者返回上一页。
+
+
+1.如果文件类型是目录的话，那么需要在目录名左边显示一个文件夹的图标，这个图片你自己去找，点击这个文件夹，将获取目录（比如/kncsz/test1),那么相应的根目录（kncsz） >也会变成根目录（kncsz） > test1,并且kncsz，test1这些目录都是可以点击的，点击之后根据目录查询下面的文件或目录。
+
+2.<span id="currentPage">1/0</span>达到分页上限制时不允许再往右翻，比如就两页不能反倒第三页
+
+3.操作部分新增一个创建任务按钮，点击之后首先判断文件前缀，如果不以.jar .py .sh .class .exe 没有后缀，除这几种之外的都提示用户文件不可执行。成功点击后跳出浮动框，获取用户输入的命令，任务名称，描述，带入当前行参数文件名和文件路径，调用selectCgroup接口，查询所有的组的路径，配置文件目录以及组名，并将组路径显示给用户，用户可选择是否加入到该组中（点击+号即为加入，该操作必须明显，要让用户直到自己加入到哪个组了，+号点击做样式），点击确定后调用8081的createTask接口，以下列方式传给后端{
+    "commands": [
+        "infinite_loop.sh"
+    ],
+    "taskName": "shell循环",
+    "cgroupPath": "/sys/fs/cgroup/user/test1",
+    "cgroupConfigDir": "/home/kncsz/SysMaster/conf/user/test1",
+    "description": "这是一个测试任务",
+    "cgroupName": "test1",
+    "fileName": "infinite_loop.sh",
+    "filePath": "/home/kncsz/SysMaster/file/user/kncsz"
+}
+
+4.向下翻页时，左边的sidebar下边就变成白色的了，也要填充为黑色，
+
+根目录（kncsz） > parent >child这里的根目录（kncsz）parent child都表示一级目录，点击就标识进入那个目录，例如点击child进入/kncsz/parent/child，做一个逻辑，使得这些目录可以被用户点击，点击后传入目录路径并调用selectFile查询那个目录下的文件和目录。而且如果当前在child目录，显示根目录（kncsz） > parent >child，如果在parent目录，则不会显示 >child，只显示根目录（kncsz） > parent
