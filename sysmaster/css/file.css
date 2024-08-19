@@ -9,7 +9,7 @@ html {
 
 .container {
 	display: flex;
-	height: 100%;
+	height: 100vh;
 }
 
 .leftsidebar {
@@ -20,8 +20,16 @@ html {
 	flex-direction: column;
 	align-items: center;
 	padding-top: 10px;
-	position: relative;
+	position: fixed;
+	/* 将位置设为固定 */
+	top: 0;
+	left: 0;
+	height: 100vh;
+	/* 确保高度始终为视口高度 */
+	overflow-y: auto;
+	/* 允许侧边栏内部滚动 */
 }
+
 
 .leftsidebar .logo {
 	width: 40px;
@@ -55,9 +63,20 @@ html {
 }
 
 .main-content {
-	flex-grow: 1;
+	margin-left: 100px;
+	/* 确保内容不被左侧栏覆盖 */
+	width: calc(100% - 100px);
+	/* 填满剩余空间 */
 	display: flex;
 	flex-direction: column;
+	height: 100vh;
+	/* 设为视口高度 */
+	overflow-y: auto;
+	/* 允许滚动 */
+	z-index: 1;
+	/* 确保在上面 */
+	position: relative;
+	/* 确保它能够在堆叠上下文中 */
 }
 
 .navigate {
@@ -102,6 +121,8 @@ html {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+	position: relative;
+	z-index: 2;
 }
 
 .file-management .path {
@@ -168,4 +189,51 @@ html {
 	transform: translateY(-50%);
 	white-space: nowrap;
 	display: none;
+}
+
+.action-buttons {
+	padding: 10px;
+	text-align: left;
+}
+
+.action-buttons button {
+	margin-right: 10px;
+	padding: 5px 10px;
+}
+
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 300px;
+	padding: 20px;
+	background-color: white;
+	border: 1px solid #ddd;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+	margin-bottom: 10px;
+	font-weight: bold;
+}
+
+.modal-body {
+	margin-bottom: 10px;
+}
+
+.modal-footer {
+	text-align: right;
+}
+
+.modal-footer button {
+	margin-left: 10px;
+}
+
+
+
+.sidebar-item.selected {
+	background-color: #ffefb1;
 }
