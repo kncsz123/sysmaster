@@ -232,8 +232,70 @@ html {
 	margin-left: 10px;
 }
 
-
-
 .sidebar-item.selected {
 	background-color: #ffefb1;
 }
+
+
+/* +样式 */
+.plus-button {
+    cursor: pointer;
+    background-color: #f1f1f1; /* 默认背景色 */
+    color: #333; /* 默认文本颜色 */
+    border: 1px solid #ccc; /* 默认边框颜色 */
+    padding: 5px 10px;
+    margin-left: 10px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.plus-button:hover {
+    background-color: red; /* 鼠标悬停时的背景色 */
+    color: white; /* 鼠标悬停时的文本颜色 */
+}
+
+.plus-button.selected {
+    background-color: red; /* 选中后的背景色 */
+    color: white; /* 选中后的文本颜色 */
+    border: 1px solid red; /* 选中后的边框颜色 */
+}
+
+/* 取消选择的样式 */
+.plus-button:not(.selected):hover {
+    background-color: red; /* 悬停未选中时背景色 */
+}
+
+.button {
+    margin-right: 10px; /* 每个按钮右侧增加10px的间距 */
+    margin-bottom: 5px; /* 每个按钮下方增加5px的间距 */
+}
+
+/* 成功提示信息样式 */
+.success-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    font-size: 16px;
+}
+
+/* 失败提示信息样式 */
+.error-message{
+	position: fixed;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: #af110b;
+	color: white;
+	padding: 10px 20px;
+	border-radius: 5px;
+	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+	z-index: 1001;
+	font-size: 16px;
+}
+
