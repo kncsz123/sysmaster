@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 						const uploadBtn = document.createElement('button');
 						uploadBtn.textContent = '上传文件';
+						uploadBtn.className = 'button';
 						uploadBtn.addEventListener('click', function() {
 							const relativePath = file.path.replace(userPrefix, '');
 							showUploadFileModal(relativePath);
@@ -105,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 						const createDirBtn = document.createElement('button');
 						createDirBtn.textContent = '创建目录';
+						createDirBtn.className = 'button';
 						createDirBtn.addEventListener('click', function() {
 							const relativePath = file.path.replace(userPrefix, '');
 							showCreateDirModal(relativePath);
@@ -115,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					} else {
 						const createTaskBtn = document.createElement('button');
 						createTaskBtn.textContent = '创建任务';
+						createTaskBtn.className = 'button';
 						createTaskBtn.addEventListener('click', function() {
 							handleCreateTask(file);
 						});
@@ -125,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					// Always add delete button
 					const deleteBtn = document.createElement('button');
 					deleteBtn.textContent = '删除';
+					deleteBtn.className = 'button';
 					deleteBtn.addEventListener('click', function() {
 						const relativePath = file.path.replace(userPrefix, '');
 						deleteFile(relativePath, file.type, file.name);
@@ -235,7 +239,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		// 检查文件是否是可执行的
 		const isExecutable = invalidExtensions.some(ext => file.name.endsWith(ext)) || !file.name.includes('.');
 		if (!isExecutable) {
-			alert('文件不可执行');
+			const errorMessage = document.createElement('div');
+			errorMessage.className = 'error-message';
+			errorMessage.textContent = '文件不可执行';
+			document.body.appendChild(errorMessage);
+			setTimeout(() => errorMessage.remove(), 3000);
 			return;
 		}
 
@@ -267,21 +275,43 @@ document.addEventListener('DOMContentLoaded', function() {
 		// 获取 cgroup 组列表
 		fetch('http://192.168.81.134:8081/api/user/selectCgroup')
 			.then(response => response.json())
-			.then(cgroups => {
-				const cgroupList = document.getElementById('cgroupList');
-				cgroups.forEach(cgroup => {
-					const cgroupItem = document.createElement('div');
-					cgroupItem.textContent = `${cgroup.name} (${cgroup.path})`;
-					const addButton = document.createElement('button');
-					addButton.textContent = '+';
-					addButton.addEventListener('click', () => {
-						addButton.classList.add('selected');
-						selectedCgroup = cgroup;
-					});
-					cgroupItem.appendChild(addButton);
-					cgroupList.appendChild(cgroupItem);
-				});
-			});
+			.then(data => {
+				if(data === null){
+					throw new Error('Request failed with status ');
+				}
+				
+				if(data.status === 200){
+					if (data.cgroups) {
+						data.cgroups.forEach(cgroup => {
+							const cgroupItem = document.createElement('div');
+							cgroupItem.textContent = `${cgroup.name} (${cgroup.cgroupPath})`;
+							const addButton = document.createElement('button');
+							addButton.textContent = '+';
+							addButton.className = 'plus-button';  // 添加样式类
+							addButton.addEventListener('click', () => {
+								document.querySelectorAll('.plus-button').forEach(btn => btn.classList.remove('selected'));
+								addButton.classList.add('selected');
+								selectedCgroup = cgroup;
+							});
+							cgroupItem.appendChild(addButton);
+							cgroupList.appendChild(cgroupItem);
+						});
+					}
+				} else if(data.status === 400){
+					const errorMessage = document.createElement('div');
+					errorMessage.className = 'error-message';
+					errorMessage.textContent = '查询错误';
+					document.body.appendChild(errorMessage);
+					setTimeout(() => errorMessage.remove(), 3000);
+				} else if(data.status === 500){
+					const errorMessage = document.createElement('div');
+					errorMessage.className = 'error-message';
+					errorMessage.textContent = '服务器错误';
+					document.body.appendChild(errorMessage);
+					setTimeout(() => errorMessage.remove(), 3000);
+				}
+			})
+			.catch(error => console.error('Error fetching cgroups:', error));
 
 		document.getElementById('closeModal').addEventListener('click', function() {
 			modal.remove();
@@ -293,15 +323,16 @@ document.addEventListener('DOMContentLoaded', function() {
 			const description = document.getElementById('description').value;
 
 			const relativePath = file.path.replace(userPrefix, '');
+			console.log(command, taskName, selectedCgroup.cgroupPath, selectedCgroup.cgroupConfigDir, description, selectedCgroup.name, file.name, file.path);
 			const payload = {
 				commands: [command],
 				taskName: taskName,
-				cgroupPath: selectedCgroup.path,
-				cgroupConfigDir: selectedCgroup.configDir,
+				cgroupPath: selectedCgroup.cgroupPath,
+				cgroupConfigDir: selectedCgroup.cgroupConfigDir,
 				description: description,
 				cgroupName: selectedCgroup.name,
 				fileName: file.name,
-				filePath: relativePath
+				filePath: file.path
 			};
 
 			fetch('http://192.168.81.134:8081/api/user/createTask', {
@@ -310,14 +341,41 @@ document.addEventListener('DOMContentLoaded', function() {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify(payload)
-			}).then(response => {
-				if (response.ok) {
-					alert('任务创建成功');
-					modal.remove();
-				} else {
-					alert('任务创建失败');
+			})
+			.then(response => response.json())
+			.then(data => {
+				if(data === null){
+					throw new Error('Request failed with status ');
 				}
-			}).catch(error => console.error('创建任务时发生错误:', error));
+				
+				if (data.status === 200) {
+					const successMessage = document.createElement('div');
+					successMessage.className = 'success-message';
+					successMessage.textContent = '任务创建成功';
+					document.body.appendChild(successMessage);
+					setTimeout(() => successMessage.remove(), 3000);
+					modal.remove();
+				} else if(data.status == 409){
+					const errorMessage = document.createElement('div');
+					errorMessage.className = 'error-message';
+					errorMessage.textContent = '任务名冲突';
+					document.body.appendChild(errorMessage);
+					setTimeout(() => errorMessage.remove(), 3000);
+				} else if(data.status == 400){
+					const errorMessage = document.createElement('div');
+					errorMessage.className = 'error-message';
+					errorMessage.textContent = '请求错误';
+					document.body.appendChild(errorMessage);
+					setTimeout(() => errorMessage.remove(), 3000);
+				} else if(data.status == 500){
+					const errorMessage = document.createElement('div');
+					errorMessage.className = 'error-message';
+					errorMessage.textContent = '服务器错误';
+					document.body.appendChild(errorMessage);
+					setTimeout(() => errorMessage.remove(), 3000);
+				}
+			})
+			.catch(error => console.error('创建任务时发生错误:', error));
 		});
 	}
 
@@ -343,27 +401,50 @@ document.addEventListener('DOMContentLoaded', function() {
 				type: type,
 				name: name
 			})
-		}).then(response => {
-			if (response.ok) {
-				alert('删除成功');
-				loadFiles(currentPath, currentPage, itemsPerPage);
-			} else {
-				alert('删除失败');
+		})
+		.then(response => response.json())
+		.then(data => {
+			if(data === null){
+				throw new Error('Request failed with status ');
 			}
-		}).catch(error => console.error('删除文件时发生错误:', error));
+			
+			if (data.status === 200) {
+				const successMessage = document.createElement('div');
+				successMessage.className = 'success-message';
+				successMessage.textContent = '删除成功';
+				document.body.appendChild(successMessage);
+				setTimeout(() => successMessage.remove(), 3000);
+				loadFiles(currentPath, currentPage, itemsPerPage);
+			} else if(data.status === 404){
+				const errorMessage = document.createElement('div');
+				errorMessage.className = 'error-message';
+				errorMessage.textContent = '文件不存在';
+				document.body.appendChild(errorMessage);
+				setTimeout(() => errorMessage.remove(), 3000);
+			} else if(data.status === 500){
+				const errorMessage = document.createElement('div');
+				errorMessage.className = 'error-message';
+				errorMessage.textContent = '服务器错误';
+				document.body.appendChild(errorMessage);
+				setTimeout(() => errorMessage.remove(), 3000);
+			}
+		})
+		.catch(error => console.error('删除文件时发生错误:', error));
 	}
 
 	// 处理上传文件按钮
 	const uploadFileButton = document.getElementById('uploadFileBtn');
-	uploadFileButton.addEventListener('click', function() {
-		showUploadFileModal(currentPath);
-	});
+	uploadFileButton.addEventListener('click',
+		function() {
+			showUploadFileModal(currentPath);
+		});
 
 	// 处理创建目录按钮
 	const createDirButton = document.getElementById('createDirBtn');
-	createDirButton.addEventListener('click', function() {
-		showCreateDirModal(currentPath);
-	});
+	createDirButton.addEventListener('click',
+		function() {
+			showCreateDirModal(currentPath);
+		});
 
 	//=======================================================================
 	// 处理侧边栏图标悬停
@@ -389,12 +470,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// 点击文件管理图标
 	const fileManagementIcon = document.getElementById('file-management');
-	fileManagementIcon.addEventListener('click', function() {
-		document.querySelectorAll('.leftsidebar nav ul li img').forEach(img => img.classList.remove(
-			'active'));
-		fileManagementIcon.querySelector('img').classList.add('active');
-		window.location.href = 'file.html';
-	});
+	fileManagementIcon.addEventListener(
+		'click',
+		function() {
+			document.querySelectorAll('.leftsidebar nav ul li img').forEach(img => img.classList.remove(
+				'active'));
+			fileManagementIcon.querySelector('img').classList.add('active');
+			window.location.href = 'file.html';
+		});
 
 	// 点击工作台图标返回原界面
 	const dashboardIcon = document.getElementById('dashboard');
@@ -500,15 +583,48 @@ document.addEventListener('DOMContentLoaded', function() {
 				fetch('http://192.168.81.134:8081/api/user/uploadFile', {
 					method: 'POST',
 					body: formData
-				}).then(response => {
-					if (response.ok) {
-						alert('上传成功');
+				})
+				.then(response => response.json())
+				.then(data => {
+					if(data === null){
+						throw new Error('Request failed with status ');
+					}
+					
+					if (data.status === 200) {
+						const successMessage = document.createElement('div');
+						successMessage.className = 'success-message';
+						successMessage.textContent = '上传成功';
+						document.body.appendChild(successMessage);
+						setTimeout(() => successMessage.remove(), 3000);
 						modal.remove();
 						loadFiles(currentPath, currentPage, itemsPerPage);
-					} else {
-						alert('上传失败');
+					} else if(data.status === 413){
+						const errorMessage = document.createElement('div');
+						errorMessage.className = 'error-message';
+						errorMessage.textContent = '文件过大';
+						document.body.appendChild(errorMessage);
+						setTimeout(() => errorMessage.remove(), 3000);
+					} else if(data.status === 400){
+						const errorMessage = document.createElement('div');
+						errorMessage.className = 'error-message';
+						errorMessage.textContent = '文件不合法';
+						document.body.appendChild(errorMessage);
+						setTimeout(() => errorMessage.remove(), 3000);
+					} else if(data.status === 500){
+						const errorMessage = document.createElement('div');
+						errorMessage.className = 'error-message';
+						errorMessage.textContent = '服务器错误';
+						document.body.appendChild(errorMessage);
+						setTimeout(() => errorMessage.remove(), 3000);
+					} else if(data.status === 10000){
+						const errorMessage = document.createElement('div');
+						errorMessage.className = 'error-message';
+						errorMessage.textContent = '文件存在风险，上传被终止！';
+						document.body.appendChild(errorMessage);
+						setTimeout(() => errorMessage.remove(), 3000);
 					}
-				}).catch(error => console.error('上传文件时发生错误:', error));
+				})
+				.catch(error => console.error('上传文件时发生错误:', error));
 			} else {
 				alert('请选择文件');
 			}
@@ -556,17 +672,44 @@ document.addEventListener('DOMContentLoaded', function() {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(payload)
-				}).then(response => {
-					if (response.ok) {
-						alert('目录创建成功');
+				})
+				.then(response => response.json())
+				.then(data => {
+					if(data === null){
+						throw new Error('Request failed with status ');
+					}
+					
+					if (data.status === 200) {
+						// 优雅地提示
+						const successMessage = document.createElement('div');
+						successMessage.className = 'success-message';
+						successMessage.textContent = '目录创建成功';
+						document.body.appendChild(successMessage);
+						setTimeout(() => successMessage.remove(), 3000); 
 						modal.remove();
 						loadFiles(currentPath, currentPage, itemsPerPage);
-					} else {
-						alert('目录创建失败');
+					} else if(data.status === 409){
+						const errorMessage = document.createElement('div');
+						errorMessage.className = 'error-message';
+						errorMessage.textContent = '目录名不能重复';
+						document.body.appendChild(errorMessage);
+						setTimeout(() => errorMessage.remove(), 3000);
+					} else if(data.status === 500){
+						const errorMessage = document.createElement('div');
+						errorMessage.className = 'error-message';
+						errorMessage.textContent = '服务器错误';
+						document.body.appendChild(errorMessage);
+						setTimeout(() => errorMessage.remove(), 3000);
 					}
-				}).catch(error => console.error('创建目录时发生错误:', error));
+				})
+				.catch(error => console.error('创建目录时发生错误:', error));
 			} else {
-				alert('请输入目录名称');
+				const errorMessage = document.createElement('div');
+				errorMessage.className = 'error-message';
+				errorMessage.textContent = '目录名称不能为空';
+				document.body.appendChild(errorMessage);
+				setTimeout(() => errorMessage.remove(), 3000);
+				modal.remove();
 			}
 		});
 	}

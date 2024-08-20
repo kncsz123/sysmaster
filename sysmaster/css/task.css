@@ -17,6 +17,14 @@ body {
 	flex-direction: column;
 	align-items: center;
 	padding-top: 10px;
+	position: fixed;
+	/* 将位置设为固定 */
+	top: 0;
+	left: 0;
+	height: 100vh;
+	/* 确保高度始终为视口高度 */
+	overflow-y: auto;
+	/* 允许侧边栏内部滚动 */
 }
 
 .leftsidebar .logo {
@@ -46,9 +54,20 @@ body {
 }
 
 .main-content {
-	flex-grow: 1;
+	margin-left: 100px;
+	/* 确保内容不被左侧栏覆盖 */
+	width: calc(100% - 100px);
+	/* 填满剩余空间 */
 	display: flex;
 	flex-direction: column;
+	height: 100vh;
+	/* 设为视口高度 */
+	overflow-y: auto;
+	/* 允许滚动 */
+	z-index: 1;
+	/* 确保在上面 */
+	position: relative;
+	/* 确保它能够在堆叠上下文中 */
 }
 
 .navigate {
@@ -297,4 +316,86 @@ form .form-actions button {
 
 #cgroup-list .plus-button.active {
 	color: darkred;
+}
+
+
+
+/* +样式 */
+
+/* 基础样式 */
+.plus-button {
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 18px;
+    background-color: #eaff25;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* 鼠标悬停时的效果 */
+.plus-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 点击时的效果 */
+.plus-button.active {
+    background-color: #28a745;
+    transform: scale(1.5);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 点击后的动画效果 */
+.plus-button::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    bottom: -5px;
+    left: -5px;
+    border-radius: 50%;
+    background: rgba(14, 118, 255, 0.5);
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+/* .plus-button.active::after {
+    opacity: 1;
+    transform: scale(1.6);
+    background: rgba(40, 167, 69, 0.5);
+} */
+
+
+/* 成功提示信息样式 */
+.success-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    font-size: 16px;
+}
+
+/* 失败提示信息样式 */
+.error-message{
+	position: fixed;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: #af110b;
+	color: white;
+	padding: 10px 20px;
+	border-radius: 5px;
+	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+	z-index: 1001;
+	font-size: 16px;
 }
