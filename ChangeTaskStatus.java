@@ -24,13 +24,15 @@ public class ChangeTaskStatus {
         Map<String, Object> response = new HashMap<>();
 
         try{
-            boolean open = requestBody.containsKey("open");
+            boolean open = Boolean.parseBoolean(requestBody.get("open").toString());
             String pid = requestBody.get("pid").toString();
             if(open){
                 String[] command = {"sudo", "kill", "-CONT", pid};
                 Runtime runtime = Runtime.getRuntime();
                 runtime.exec(command);
 
+                open = true;
+                taskRepository.updateStatus(pid, open);
                 response.put("status", 200);
                 response.put("message", "Task is opened");
             }else{
@@ -47,7 +49,7 @@ public class ChangeTaskStatus {
                 String line;
                 boolean isFirstLine = true;
 
-                String execTime = "";
+                String total_time_of_recent_run = "";
                 while ((line = reader.readLine()) != null) {
                     if (isFirstLine) {
                         // 忽略第一行标题行
@@ -60,11 +62,12 @@ public class ChangeTaskStatus {
 
                     // 分割行内容，提取TIME字段
                     String[] fields = line.trim().split("\\s+");
-                    execTime = fields[13];  // 根据ps输出的字段顺序获取TIME字段
+                    total_time_of_recent_run = fields[13];  // 根据ps输出的字段顺序获取TIME字段
                 }
 
+                open = false;
                 // 更新上次执行的时长
-                taskRepository.updateExecTime(execTime, pid);
+                taskRepository.updateExecTimeAndStatus(total_time_of_recent_run, pid, open);
 
                 String[] command2 = {"sudo", "kill", "-STOP", pid};
                 Runtime runtime2 = Runtime.getRuntime();
