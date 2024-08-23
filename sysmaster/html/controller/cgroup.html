@@ -48,27 +48,11 @@
 
 				<!-- 下部内容区 -->
 				<div class="content" id="content">
-					<!-- 操作栏 -->
-					<div class="task-actions">
-						<input type="text" placeholder="组名称">
-						<input type="text" placeholder="创建时间" id="create-time-start"> 到 <input type="text"
-							placeholder="创建时间" id="create-time-end">
-						<button id="search-cgroup">搜索</button>
-					</div>
-
-					<!-- 任务操作 -->
-					<div class="task-options">
-						<button id="add-cgroup">添加组</button>
-						<button>导出选中记录</button>
-						<button>导出所有记录</button>
-					</div>
-
 					<!-- 组列表 -->
 					<div class="task-list">
 						<table>
 							<thead>
 								<tr>
-									<th><input type="checkbox"></th>
 									<th>组名称</th>
 									<th>层级</th>
 									<th>创建时间</th>
@@ -77,62 +61,13 @@
 								</tr>
 							</thead>
 							<tbody id="cgroup-table-body">
-								<!-- 更多数据行 -->
+								<!-- 数据行在这里动态添加 -->
 							</tbody>
 						</table>
 					</div>
-
-					<!-- 分页 -->
-					<div class="pagination">
-						<button>&lt;&lt;</button>
-						<button>&lt;</button>
-						<span>1</span>
-						<button>&gt;</button>
-						<button>&gt;&gt;</button>
-						<select>
-							<option value="10">10</option>
-							<option value="20">20</option>
-						</select>
-					</div>
 				</div>
 			</div>
 		</div>
-
-		<!-- 新增组浮框 -->
-		<div class="modal" id="cgroup-modal">
-			<div class="modal-content">
-				<span class="close-button" id="close-cgroup-modal">&times;</span>
-				<h2>新增组</h2>
-				<div class="form-section">
-					<h3>基本信息</h3>
-					<form id="cgroup-form">
-						<label for="cgroup-name">组名称：<span>*</span></label>
-						<input type="text" id="cgroup-name" placeholder="请输入组名称">
-
-						<label for="remarks">备注：</label>
-						<textarea id="remarks" rows="4"></textarea>
-
-						<div class="form-actions">
-							<button type="button" id="save-and-add-cgroup">保存并新增</button>
-							<button type="button" id="close-form-cgroup">关闭</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-
-		<!-- 组配置浮框 -->
-		<div class="modal" id="cgroup-config-modal">
-			<div class="modal-content">
-				<span class="close-button" id="close-config-modal">&times;</span>
-				<h2>组配置</h2>
-				<div id="cgroup-config-details"></div>
-				<div class="form-actions">
-					<button type="button" id="close-config">关闭</button>
-				</div>
-			</div>
-		</div>
-
 		<script src="../../js/cgroup.js"></script>
 	</body>
 </html>

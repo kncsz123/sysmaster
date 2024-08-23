@@ -37,11 +37,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		// 每次查询清除原来样式
 		taskData = [];
 		totalItems = 0;
-		
+
 		fetch(`http://192.168.81.134:8081/api/user/selectTask?page=${page}&pageSize=${pageSize}`)
 			.then(response => response.json())
 			.then(data => {
-				if(data.status !== 200){
+				if (data.status !== 200) {
 					const errorMessage = document.createElement('div');
 					errorMessage.className = 'error-message';
 					errorMessage.textContent = '查询任务失败';
@@ -122,10 +122,10 @@ document.addEventListener('DOMContentLoaded', function() {
 				})
 				.then(response => response.json())
 				.then(data => {
-					if(data === null){
+					if (data === null) {
 						throw new Error('Request failed with status ');
 					}
-					if(data.status === 200){
+					if (data.status === 200) {
 						if (isRunning) {
 							target.classList.remove('stop');
 							target.classList.add('run');
@@ -140,13 +140,13 @@ document.addEventListener('DOMContentLoaded', function() {
 						successMessage.textContent = '任务状态更新成功';
 						document.body.appendChild(successMessage);
 						setTimeout(() => successMessage.remove(), 3000);
-					} else if(data.status === 400){
+					} else if (data.status === 400) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '更新过程出现错误';
 						document.body.appendChild(errorMessage);
 						setTimeout(() => errorMessage.remove(), 3000);
-					} else if(data.status === 500){
+					} else if (data.status === 500) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '服务器错误';
@@ -178,28 +178,28 @@ document.addEventListener('DOMContentLoaded', function() {
 				})
 				.then(response => response.json())
 				.then(data => {
-					if(data === null){
+					if (data === null) {
 						throw new Error('Request failed with status ');
 					}
-					if(data.status === 200){
+					if (data.status === 200) {
 						const successMessage = document.createElement('div');
 						successMessage.className = 'success-message';
 						successMessage.textContent = '任务删除成功';
 						document.body.appendChild(successMessage);
 						setTimeout(() => successMessage.remove(), 3000);
-					} else if(data.status === 404){
+					} else if (data.status === 404) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '任务不存在';
 						document.body.appendChild(errorMessage);
 						setTimeout(() => errorMessage.remove(), 3000);
-					} else if(data.status === 400){
+					} else if (data.status === 400) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '删除异常';
 						document.body.appendChild(errorMessage);
 						setTimeout(() => errorMessage.remove(), 3000);
-					} else if(data.status === 404){
+					} else if (data.status === 404) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '服务器错误';
@@ -217,10 +217,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			fetch(`http://192.168.81.134:8081/api/user/viewTaskResourceUsage?pid=${pid}`)
 				.then(response => response.json())
 				.then(data => {
-					if(data === null){
+					if (data === null) {
 						throw new Error('Request failed with status ');
 					}
-					if(data.status === 200){
+					if (data.status === 200) {
 						taskDetailsContainer.innerHTML = `
 						    <div>所属用户: ${data.user}</div>
 						    <div>共享内存: ${data.shr}KB</div>
@@ -234,20 +234,20 @@ document.addEventListener('DOMContentLoaded', function() {
 						    <div>运行状态: ${data.s}</div>
 						`;
 						taskDetailModal.style.display = 'block';
-					} else if(data.status === 400) {
+					} else if (data.status === 400) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '查询出现错误';
 						document.body.appendChild(errorMessage);
 						setTimeout(() => errorMessage.remove(), 3000);
-					} else if(data.status === 500){
+					} else if (data.status === 500) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '服务器错误';
 						document.body.appendChild(errorMessage);
 						setTimeout(() => errorMessage.remove(), 3000);
 					}
-					
+
 				})
 				.catch(error => console.error('Error fetching task details:', error));
 		}
@@ -260,10 +260,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			fetch('http://192.168.81.134:8081/api/user/selectCgroup')
 				.then(response => response.json())
 				.then(data => {
-					if(data === null){
+					if (data === null) {
 						throw new Error('Request failed with status ');
 					}
-					if(data.status === 200){
+					if (data.status === 200) {
 						cgroupListContainer.innerHTML = ''; // Clear previous cgroups
 						if (data.cgroups) {
 							data.cgroups.forEach(cgroup => {
@@ -274,29 +274,32 @@ document.addEventListener('DOMContentLoaded', function() {
 						        `;
 								cgroupListContainer.appendChild(cgroupDiv);
 							});
-						
+
 							// Attach click event to plus buttons
 							document.querySelectorAll('.plus-button').forEach(button => {
 								button.addEventListener('click', function() {
-									document.querySelectorAll('.plus-button').forEach(
-										btn => btn.classList.remove('active'));
+									document.querySelectorAll('.plus-button')
+										.forEach(
+											btn => btn.classList.remove('active'));
 									this.classList.toggle('active');
-									selectedCgroup = this.classList.contains('active') ?
+									selectedCgroup = this.classList.contains(
+											'active') ?
 										this.getAttribute('data-name') : null;
-									selectedCgroupHierarchy = this.classList.contains('active') ? 
+									selectedCgroupHierarchy = this.classList
+										.contains('active') ?
 										this.getAttribute('data-hierarchy') : null;
 								});
 							});
-						
+
 							migrateTaskModal.style.display = 'block';
 						}
-					} else if(data.status === 400) {
+					} else if (data.status === 400) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '查询出现错误';
 						document.body.appendChild(errorMessage);
 						setTimeout(() => errorMessage.remove(), 3000);
-					} else if(data.status === 500){
+					} else if (data.status === 500) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '服务器错误';
@@ -326,23 +329,23 @@ document.addEventListener('DOMContentLoaded', function() {
 				})
 				.then(response => response.json())
 				.then(data => {
-					if(data === null){
+					if (data === null) {
 						throw new Error('Request failed with status ');
 					}
-					
-					if(data.status === 200){
+
+					if (data.status === 200) {
 						const successMessage = document.createElement('div');
 						successMessage.className = 'success-message';
 						successMessage.textContent = '任务迁移成功';
 						document.body.appendChild(successMessage);
 						setTimeout(() => successMessage.remove(), 3000);
-					} else if(data.status === 400){
+					} else if (data.status === 400) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '请求错误';
 						document.body.appendChild(errorMessage);
 						setTimeout(() => errorMessage.remove(), 3000);
-					} else if(data.status === 500){
+					} else if (data.status === 500) {
 						const errorMessage = document.createElement('div');
 						errorMessage.className = 'error-message';
 						errorMessage.textContent = '服务器错误';
@@ -516,44 +519,100 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// Handle Filter Tasks Button Click
 	filterTasksButton.addEventListener('click', function() {
-		const taskName = taskNameInput.value || null;
-		const startTime = startTimeInput.value || null;
-		const endTime = endTimeInput.value || null;
+		// 获取输入值，确保空值转换为空字符串
+		let taskName = taskNameInput.value ? taskNameInput.value.trim() : '';
+		let startTime = startTimeInput.value ? taskNameInput.value.trim() : '';
+		let endTime = endTimeInput.value ? endTimeInput.value.trim() : '';
 
-		const params = {
-			name: taskName,
-			startTime: startTime,
-			endTime: endTime
+		// 如果startTime为空，设置为最早的时间 '1970年01月01日'
+		if (!startTime) {
+			startTime = new Date('1970-01-01');
+		} else {
+			startTime = new Date(startTime.replace(/年|月/g, '-').replace(/日/g, ''));
+		}
+
+		// 如果endTime为空，设置为最晚的时间 '2099年12月31日'
+		if (!endTime) {
+			endTime = new Date('2099-12-31');
+		} else {
+			endTime = new Date(endTime.replace(/年|月/g, '-').replace(/日/g, ''));
+		}
+
+		// 格式化日期为 'xxxx年xx月xx日'
+		const formatDate = (date) => {
+			const year = date.getFullYear();
+			const month = (date.getMonth() + 1).toString().padStart(2, '0');
+			const day = date.getDate().toString().padStart(2, '0');
+			return `${year}年${month}月${day}日`;
 		};
 
+		startTime = formatDate(startTime);
+		endTime = formatDate(endTime);
+
+		// 构建查询参数
+		let queryParams = [];
+		queryParams.push(`name=${encodeURIComponent(taskName || ' ')}`); //这里很重要，传入空不能写''
+		queryParams.push(`startTime=${encodeURIComponent(startTime || ' ')}`);
+		queryParams.push(`endTime=${encodeURIComponent(endTime || ' ')}`);
+
+		// 构建URL
+		let url = 'http://192.168.81.134:8081/api/user/searchTask';
+		if (queryParams.length > 0) {
+			url += '?' + queryParams.join('&');
+		}
+
 		// Send the parameters to the backend
-		fetch('http://192.168.81.134:8081/api/user/filterTasks', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(params)
-			})
+		fetch(url)
 			.then(response => response.json())
 			.then(data => {
-				if(data === null){
+				if (data === null) {
 					throw new Error('Request failed with status ');
 				}
-				
-				if(data.status === 200){
-					console.log('Filtered tasks:', data);
-					const successMessage = document.createElement('div');
-					successMessage.className = 'success-message';
-					successMessage.textContent = '筛选成功';
-					document.body.appendChild(successMessage);
-					setTimeout(() => successMessage.remove(), 3000); 
-				} else if(data.status === 400){
+
+				if (data.status === 200) {
+					// 清空现有的任务列表
+					taskTableBody.innerHTML = '';
+
+					// 检查是否有任务数据
+					if (data.tasks && data.tasks.length > 0) {
+						console.log('Filtered tasks:', data);
+						const successMessage = document.createElement('div');
+						successMessage.className = 'success-message';
+						successMessage.textContent = '筛选成功';
+						document.body.appendChild(successMessage);
+						setTimeout(() => successMessage.remove(), 3000);
+						data.tasks.forEach(task => {
+							const row = document.createElement('tr');
+							row.innerHTML = `
+												<td><input type="checkbox"></td>
+												<td>${task.name}</td>
+												<td><button class="status-btn ${task.status === true ? 'stop' : 'run'}">${task.status === true ? '停止' : '运行'}</button></td>
+												<td>${task.path}</td>
+												<td>${task.totalTimeOfRecentRun}</td>
+												<td>${task.datestamp}</td>
+												<td>${task.description}</td>
+												<td>
+													<button class="view-details" data-pid="${task.pid}">查看详情</button>
+													<button class="migrate" data-pid="${task.pid}">迁移任务</button>
+													<button class="delete" data-pid="${task.pid}">删除</button>
+												</td>
+											`;
+							taskTableBody.appendChild(row);
+						});
+					} else {
+						const errorMessage = document.createElement('div');
+						errorMessage.className = 'error-message';
+						errorMessage.textContent = '没有找到符合条件的任务';
+						document.body.appendChild(errorMessage);
+						setTimeout(() => errorMessage.remove(), 3000);
+					}
+				} else if (data.status === 400) {
 					const errorMessage = document.createElement('div');
 					errorMessage.className = 'error-message';
-					errorMessage.textContent = '请求错误';
+					errorMessage.textContent = '参数错误';
 					document.body.appendChild(errorMessage);
 					setTimeout(() => errorMessage.remove(), 3000);
-				} else if(data.status === 500){
+				} else if (data.status === 500) {
 					const errorMessage = document.createElement('div');
 					errorMessage.className = 'error-message';
 					errorMessage.textContent = '服务器错误';
@@ -563,10 +622,4 @@ document.addEventListener('DOMContentLoaded', function() {
 			})
 			.catch(error => console.error('Error filtering tasks:', error));
 	});
-	
-	// 成功提示
-	function showSuccessMesssage() {
-		
-	}
-	// 失败提示
 });

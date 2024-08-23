@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
-	const currentPath = '/kncsz'; // 初始化路径为 /kncsz
+	/*
+		
+	*/
+	const currentPath = '/kncsz'; // 初始化路径为'kncsz'
+	const currentCreateDirPath = '/user';
+	const currentUploadFilePath = '/user';
+	const currentDirName = 'kncsz';
 	const userPrefix = '/home/kncsz/SysMaster/file/user';
 	let currentPage = 1;
 	let itemsPerPage = 10;
@@ -101,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						uploadBtn.className = 'button';
 						uploadBtn.addEventListener('click', function() {
 							const relativePath = file.path.replace(userPrefix, '');
-							showUploadFileModal(relativePath);
+							showUploadFileModal(relativePath, file.name);
 						});
 
 						const createDirBtn = document.createElement('button');
@@ -109,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						createDirBtn.className = 'button';
 						createDirBtn.addEventListener('click', function() {
 							const relativePath = file.path.replace(userPrefix, '');
-							showCreateDirModal(relativePath);
+							showCreateDirModal(relativePath, file.name);
 						});
 
 						actionCell.appendChild(uploadBtn);
@@ -276,20 +282,21 @@ document.addEventListener('DOMContentLoaded', function() {
 		fetch('http://192.168.81.134:8081/api/user/selectCgroup')
 			.then(response => response.json())
 			.then(data => {
-				if(data === null){
+				if (data === null) {
 					throw new Error('Request failed with status ');
 				}
-				
-				if(data.status === 200){
+
+				if (data.status === 200) {
 					if (data.cgroups) {
 						data.cgroups.forEach(cgroup => {
 							const cgroupItem = document.createElement('div');
 							cgroupItem.textContent = `${cgroup.name} (${cgroup.cgroupPath})`;
 							const addButton = document.createElement('button');
 							addButton.textContent = '+';
-							addButton.className = 'plus-button';  // 添加样式类
+							addButton.className = 'plus-button'; // 添加样式类
 							addButton.addEventListener('click', () => {
-								document.querySelectorAll('.plus-button').forEach(btn => btn.classList.remove('selected'));
+								document.querySelectorAll('.plus-button').forEach(btn => btn
+									.classList.remove('selected'));
 								addButton.classList.add('selected');
 								selectedCgroup = cgroup;
 							});
@@ -297,13 +304,13 @@ document.addEventListener('DOMContentLoaded', function() {
 							cgroupList.appendChild(cgroupItem);
 						});
 					}
-				} else if(data.status === 400){
+				} else if (data.status === 400) {
 					const errorMessage = document.createElement('div');
 					errorMessage.className = 'error-message';
 					errorMessage.textContent = '查询错误';
 					document.body.appendChild(errorMessage);
 					setTimeout(() => errorMessage.remove(), 3000);
-				} else if(data.status === 500){
+				} else if (data.status === 500) {
 					const errorMessage = document.createElement('div');
 					errorMessage.className = 'error-message';
 					errorMessage.textContent = '服务器错误';
@@ -323,7 +330,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			const description = document.getElementById('description').value;
 
 			const relativePath = file.path.replace(userPrefix, '');
-			console.log(command, taskName, selectedCgroup.cgroupPath, selectedCgroup.cgroupConfigDir, description, selectedCgroup.name, file.name, file.path);
+			console.log(command, taskName, selectedCgroup.cgroupPath, selectedCgroup.cgroupConfigDir,
+				description, selectedCgroup.name, file.name, file.path);
 			const payload = {
 				commands: [command],
 				taskName: taskName,
@@ -336,52 +344,52 @@ document.addEventListener('DOMContentLoaded', function() {
 			};
 
 			fetch('http://192.168.81.134:8081/api/user/createTask', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(payload)
-			})
-			.then(response => response.json())
-			.then(data => {
-				if(data === null){
-					throw new Error('Request failed with status ');
-				}
-				
-				if (data.status === 200) {
-					const successMessage = document.createElement('div');
-					successMessage.className = 'success-message';
-					successMessage.textContent = '任务创建成功';
-					document.body.appendChild(successMessage);
-					setTimeout(() => successMessage.remove(), 3000);
-					modal.remove();
-				} else if(data.status == 409){
-					const errorMessage = document.createElement('div');
-					errorMessage.className = 'error-message';
-					errorMessage.textContent = '任务名冲突';
-					document.body.appendChild(errorMessage);
-					setTimeout(() => errorMessage.remove(), 3000);
-				} else if(data.status == 400){
-					const errorMessage = document.createElement('div');
-					errorMessage.className = 'error-message';
-					errorMessage.textContent = '请求错误';
-					document.body.appendChild(errorMessage);
-					setTimeout(() => errorMessage.remove(), 3000);
-				} else if(data.status == 500){
-					const errorMessage = document.createElement('div');
-					errorMessage.className = 'error-message';
-					errorMessage.textContent = '服务器错误';
-					document.body.appendChild(errorMessage);
-					setTimeout(() => errorMessage.remove(), 3000);
-				}
-			})
-			.catch(error => console.error('创建任务时发生错误:', error));
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(payload)
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data === null) {
+						throw new Error('Request failed with status ');
+					}
+
+					if (data.status === 200) {
+						const successMessage = document.createElement('div');
+						successMessage.className = 'success-message';
+						successMessage.textContent = '任务创建成功';
+						document.body.appendChild(successMessage);
+						setTimeout(() => successMessage.remove(), 3000);
+						modal.remove();
+					} else if (data.status == 409) {
+						const errorMessage = document.createElement('div');
+						errorMessage.className = 'error-message';
+						errorMessage.textContent = '任务名冲突';
+						document.body.appendChild(errorMessage);
+						setTimeout(() => errorMessage.remove(), 3000);
+					} else if (data.status == 400) {
+						const errorMessage = document.createElement('div');
+						errorMessage.className = 'error-message';
+						errorMessage.textContent = '请求错误';
+						document.body.appendChild(errorMessage);
+						setTimeout(() => errorMessage.remove(), 3000);
+					} else if (data.status == 500) {
+						const errorMessage = document.createElement('div');
+						errorMessage.className = 'error-message';
+						errorMessage.textContent = '服务器错误';
+						document.body.appendChild(errorMessage);
+						setTimeout(() => errorMessage.remove(), 3000);
+					}
+				})
+				.catch(error => console.error('创建任务时发生错误:', error));
 		});
 	}
 
 	// 文件上传操作
-	function uploadFile(path) {
-		showUploadFileModal(path);
+	function uploadFile(path, dirName) {
+		showUploadFileModal(path, dirName);
 	}
 
 	// 创建目录操作
@@ -392,58 +400,58 @@ document.addEventListener('DOMContentLoaded', function() {
 	// 删除文件/目录操作
 	function deleteFile(path, type, name) {
 		fetch('http://192.168.81.134:8081/api/user/deleteFile', {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				path: path,
-				type: type,
-				name: name
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					path: path,
+					type: type,
+					name: name
+				})
 			})
-		})
-		.then(response => response.json())
-		.then(data => {
-			if(data === null){
-				throw new Error('Request failed with status ');
-			}
-			
-			if (data.status === 200) {
-				const successMessage = document.createElement('div');
-				successMessage.className = 'success-message';
-				successMessage.textContent = '删除成功';
-				document.body.appendChild(successMessage);
-				setTimeout(() => successMessage.remove(), 3000);
-				loadFiles(currentPath, currentPage, itemsPerPage);
-			} else if(data.status === 404){
-				const errorMessage = document.createElement('div');
-				errorMessage.className = 'error-message';
-				errorMessage.textContent = '文件不存在';
-				document.body.appendChild(errorMessage);
-				setTimeout(() => errorMessage.remove(), 3000);
-			} else if(data.status === 500){
-				const errorMessage = document.createElement('div');
-				errorMessage.className = 'error-message';
-				errorMessage.textContent = '服务器错误';
-				document.body.appendChild(errorMessage);
-				setTimeout(() => errorMessage.remove(), 3000);
-			}
-		})
-		.catch(error => console.error('删除文件时发生错误:', error));
+			.then(response => response.json())
+			.then(data => {
+				if (data === null) {
+					throw new Error('Request failed with status ');
+				}
+
+				if (data.status === 200) {
+					const successMessage = document.createElement('div');
+					successMessage.className = 'success-message';
+					successMessage.textContent = '删除成功';
+					document.body.appendChild(successMessage);
+					setTimeout(() => successMessage.remove(), 3000);
+					loadFiles(currentPath, currentPage, itemsPerPage);
+				} else if (data.status === 404) {
+					const errorMessage = document.createElement('div');
+					errorMessage.className = 'error-message';
+					errorMessage.textContent = '文件不存在';
+					document.body.appendChild(errorMessage);
+					setTimeout(() => errorMessage.remove(), 3000);
+				} else if (data.status === 500) {
+					const errorMessage = document.createElement('div');
+					errorMessage.className = 'error-message';
+					errorMessage.textContent = '服务器错误';
+					document.body.appendChild(errorMessage);
+					setTimeout(() => errorMessage.remove(), 3000);
+				}
+			})
+			.catch(error => console.error('删除文件时发生错误:', error));
 	}
 
 	// 处理上传文件按钮
 	const uploadFileButton = document.getElementById('uploadFileBtn');
 	uploadFileButton.addEventListener('click',
 		function() {
-			showUploadFileModal(currentPath);
+			showUploadFileModal(currentUploadFilePath, currentDirName);
 		});
 
 	// 处理创建目录按钮
 	const createDirButton = document.getElementById('createDirBtn');
 	createDirButton.addEventListener('click',
 		function() {
-			showCreateDirModal(currentPath);
+			showCreateDirModal2(currentCreateDirPath, currentDirName);
 		});
 
 	//=======================================================================
@@ -546,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 	// 显示上传文件浮动框
-	function showUploadFileModal(currentPath) {
+	function showUploadFileModal(currentLinePath, dirName) {
 		const modal = document.createElement('div');
 		modal.className = 'modal';
 		modal.innerHTML = `
@@ -573,58 +581,60 @@ document.addEventListener('DOMContentLoaded', function() {
 		document.getElementById('uploadFile').addEventListener('click', function() {
 			const description = document.getElementById('description').value;
 			const fileInput = document.getElementById('file');
+			// const dirName = document.getElementById('dirName');
 			const file = fileInput.files[0];
+			console.log(file, currentLinePath, description, dirName);
 			if (file) {
 				const formData = new FormData();
 				formData.append('file', file);
-				formData.append('path', currentPath);
+				formData.append('path', currentLinePath);
 				formData.append('description', description);
-
+				formData.append('dirName', dirName);
 				fetch('http://192.168.81.134:8081/api/user/uploadFile', {
-					method: 'POST',
-					body: formData
-				})
-				.then(response => response.json())
-				.then(data => {
-					if(data === null){
-						throw new Error('Request failed with status ');
-					}
-					
-					if (data.status === 200) {
-						const successMessage = document.createElement('div');
-						successMessage.className = 'success-message';
-						successMessage.textContent = '上传成功';
-						document.body.appendChild(successMessage);
-						setTimeout(() => successMessage.remove(), 3000);
-						modal.remove();
-						loadFiles(currentPath, currentPage, itemsPerPage);
-					} else if(data.status === 413){
-						const errorMessage = document.createElement('div');
-						errorMessage.className = 'error-message';
-						errorMessage.textContent = '文件过大';
-						document.body.appendChild(errorMessage);
-						setTimeout(() => errorMessage.remove(), 3000);
-					} else if(data.status === 400){
-						const errorMessage = document.createElement('div');
-						errorMessage.className = 'error-message';
-						errorMessage.textContent = '文件不合法';
-						document.body.appendChild(errorMessage);
-						setTimeout(() => errorMessage.remove(), 3000);
-					} else if(data.status === 500){
-						const errorMessage = document.createElement('div');
-						errorMessage.className = 'error-message';
-						errorMessage.textContent = '服务器错误';
-						document.body.appendChild(errorMessage);
-						setTimeout(() => errorMessage.remove(), 3000);
-					} else if(data.status === 10000){
-						const errorMessage = document.createElement('div');
-						errorMessage.className = 'error-message';
-						errorMessage.textContent = '文件存在风险，上传被终止！';
-						document.body.appendChild(errorMessage);
-						setTimeout(() => errorMessage.remove(), 3000);
-					}
-				})
-				.catch(error => console.error('上传文件时发生错误:', error));
+						method: 'POST',
+						body: formData
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data === null) {
+							throw new Error('Request failed with status ');
+						}
+
+						if (data.status === 200) {
+							const successMessage = document.createElement('div');
+							successMessage.className = 'success-message';
+							successMessage.textContent = '上传成功';
+							document.body.appendChild(successMessage);
+							setTimeout(() => successMessage.remove(), 3000);
+							modal.remove();
+							loadFiles(currentPath, currentPage, itemsPerPage);
+						} else if (data.status === 413) {
+							const errorMessage = document.createElement('div');
+							errorMessage.className = 'error-message';
+							errorMessage.textContent = '文件过大';
+							document.body.appendChild(errorMessage);
+							setTimeout(() => errorMessage.remove(), 3000);
+						} else if (data.status === 400) {
+							const errorMessage = document.createElement('div');
+							errorMessage.className = 'error-message';
+							errorMessage.textContent = '文件不合法';
+							document.body.appendChild(errorMessage);
+							setTimeout(() => errorMessage.remove(), 3000);
+						} else if (data.status === 500) {
+							const errorMessage = document.createElement('div');
+							errorMessage.className = 'error-message';
+							errorMessage.textContent = '服务器错误';
+							document.body.appendChild(errorMessage);
+							setTimeout(() => errorMessage.remove(), 3000);
+						} else if (data.status === 10000) {
+							const errorMessage = document.createElement('div');
+							errorMessage.className = 'error-message';
+							errorMessage.textContent = '文件存在风险，上传被终止！';
+							document.body.appendChild(errorMessage);
+							setTimeout(() => errorMessage.remove(), 3000);
+						}
+					})
+					.catch(error => console.error('上传文件时发生错误:', error));
 			} else {
 				alert('请选择文件');
 			}
@@ -632,7 +642,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	// 显示创建目录浮动框
-	function showCreateDirModal(currentPath) {
+	function showCreateDirModal(currentPath, parentDirName) {
 		const modal = document.createElement('div');
 		modal.className = 'modal';
 		modal.innerHTML = `
@@ -659,50 +669,52 @@ document.addEventListener('DOMContentLoaded', function() {
 		document.getElementById('createDir').addEventListener('click', function() {
 			const dirName = document.getElementById('dirName').value;
 			const description = document.getElementById('description').value;
+			console.log(currentPath, dirName, description, parentDirName);
 			if (dirName) {
 				const payload = {
 					path: currentPath,
 					name: dirName,
-					description: description
+					description: description,
+					parentDirName: parentDirName
 				};
 
 				fetch('http://192.168.81.134:8081/api/user/createDirectory', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(payload)
-				})
-				.then(response => response.json())
-				.then(data => {
-					if(data === null){
-						throw new Error('Request failed with status ');
-					}
-					
-					if (data.status === 200) {
-						// 优雅地提示
-						const successMessage = document.createElement('div');
-						successMessage.className = 'success-message';
-						successMessage.textContent = '目录创建成功';
-						document.body.appendChild(successMessage);
-						setTimeout(() => successMessage.remove(), 3000); 
-						modal.remove();
-						loadFiles(currentPath, currentPage, itemsPerPage);
-					} else if(data.status === 409){
-						const errorMessage = document.createElement('div');
-						errorMessage.className = 'error-message';
-						errorMessage.textContent = '目录名不能重复';
-						document.body.appendChild(errorMessage);
-						setTimeout(() => errorMessage.remove(), 3000);
-					} else if(data.status === 500){
-						const errorMessage = document.createElement('div');
-						errorMessage.className = 'error-message';
-						errorMessage.textContent = '服务器错误';
-						document.body.appendChild(errorMessage);
-						setTimeout(() => errorMessage.remove(), 3000);
-					}
-				})
-				.catch(error => console.error('创建目录时发生错误:', error));
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(payload)
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data === null) {
+							throw new Error('Request failed with status ');
+						}
+
+						if (data.status === 200) {
+							// 优雅地提示
+							const successMessage = document.createElement('div');
+							successMessage.className = 'success-message';
+							successMessage.textContent = '目录创建成功';
+							document.body.appendChild(successMessage);
+							setTimeout(() => successMessage.remove(), 3000);
+							modal.remove();
+							loadFiles(currentPath, currentPage, itemsPerPage);
+						} else if (data.status === 409) {
+							const errorMessage = document.createElement('div');
+							errorMessage.className = 'error-message';
+							errorMessage.textContent = '目录名不能重复';
+							document.body.appendChild(errorMessage);
+							setTimeout(() => errorMessage.remove(), 3000);
+						} else if (data.status === 500) {
+							const errorMessage = document.createElement('div');
+							errorMessage.className = 'error-message';
+							errorMessage.textContent = '服务器错误';
+							document.body.appendChild(errorMessage);
+							setTimeout(() => errorMessage.remove(), 3000);
+						}
+					})
+					.catch(error => console.error('创建目录时发生错误:', error));
 			} else {
 				const errorMessage = document.createElement('div');
 				errorMessage.className = 'error-message';
@@ -714,6 +726,89 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 
+	function showCreateDirModal2(currentPath, parentDirName) {
+		const modal = document.createElement('div');
+		modal.className = 'modal';
+		modal.innerHTML = `
+		    <div class="modal-header">创建目录</div>
+		    <div class="modal-body">
+		        <label for="dirName">目录名称:</label>
+		        <input type="text" id="dirName">
+		        <br><br>
+		        <label for="description">描述:</label>
+		        <input type="text" id="description">
+		    </div>
+		    <div class="modal-footer">
+		        <button id="closeModal">关闭</button>
+		        <button id="createDir">创建</button>
+		    </div>
+		`;
+		document.body.appendChild(modal);
+		modal.style.display = 'block';
+
+		document.getElementById('closeModal').addEventListener('click', function() {
+			modal.remove();
+		});
+
+		document.getElementById('createDir').addEventListener('click', function() {
+			const dirName = document.getElementById('dirName').value;
+			const description = document.getElementById('description').value;
+			console.log(currentPath, dirName, description, parentDirName);
+			if (dirName) {
+				const payload = {
+					path: currentPath,
+					name: dirName,
+					description: description,
+					parentDirName: parentDirName
+				};
+
+				fetch('http://192.168.81.134:8081/api/user/createDirectory', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(payload)
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data === null) {
+							throw new Error('Request failed with status ');
+						}
+
+						if (data.status === 200) {
+							// 优雅地提示
+							const successMessage = document.createElement('div');
+							successMessage.className = 'success-message';
+							successMessage.textContent = '目录创建成功';
+							document.body.appendChild(successMessage);
+							setTimeout(() => successMessage.remove(), 3000);
+							modal.remove();
+							loadFiles(currentPath, currentPage, itemsPerPage);
+						} else if (data.status === 409) {
+							const errorMessage = document.createElement('div');
+							errorMessage.className = 'error-message';
+							errorMessage.textContent = '目录名不能重复';
+							document.body.appendChild(errorMessage);
+							setTimeout(() => errorMessage.remove(), 3000);
+						} else if (data.status === 500) {
+							const errorMessage = document.createElement('div');
+							errorMessage.className = 'error-message';
+							errorMessage.textContent = '服务器错误';
+							document.body.appendChild(errorMessage);
+							setTimeout(() => errorMessage.remove(), 3000);
+						}
+					})
+					.catch(error => console.error('创建目录时发生错误:', error));
+			} else {
+				const errorMessage = document.createElement('div');
+				errorMessage.className = 'error-message';
+				errorMessage.textContent = '目录名称不能为空';
+				document.body.appendChild(errorMessage);
+				setTimeout(() => errorMessage.remove(), 3000);
+				modal.remove();
+			}
+		});
+	}
 	// 初始加载
 	loadFiles(currentPath, currentPage, itemsPerPage);
 });
